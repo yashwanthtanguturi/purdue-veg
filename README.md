@@ -33,6 +33,13 @@ Coming soon. This will be filled once the script is tested.
 ## Usage
 Coming soon. This will be filled in with the real command and sample output once the script works.
 
+## Limitations
+
+1bowl at Meredith Hall and Sushi Boss at South Hall are not included.
+Purdue's menu data has no nutrition or allergen information for their
+items, so none of them are flagged vegetarian. Ask at the counter.
+
+
 ## Roadmap
 
 - [ ] Show each location's hours
