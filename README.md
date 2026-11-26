@@ -39,7 +39,7 @@ Coming soon. This will be filled in with the real command and sample output once
 Purdue's menu data has no nutrition or allergen information for their
 items, so none of them are flagged vegetarian. Ask at the counter.
 
-
+Cron only runs while the computer is awake, so scheduled updates are skipped if it's asleep. Run `./purdue-veg.sh update` manually to refresh.
 ## Roadmap
 
 - [ ] Show each location's hours
