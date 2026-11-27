@@ -4,6 +4,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
+source lib/api.sh
 source lib/hours.sh
 source lib/menu.sh
 source lib/view.sh
