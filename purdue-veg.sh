@@ -17,11 +17,8 @@ require_cmd() {
 require_cmd jq
 require_cmd curl
 
-# Every subcommand reads this list. Fail early if the checkout is incomplete.
-if [ ! -f locations.txt ]; then
-    echo "purdue-veg: locations.txt is missing." >&2
-    exit 1
-fi
+# locations.txt is only the offline copy. Commands prefer the live API list,
+# which is every dining location Purdue currently publishes.
 
 source lib/api.sh
 source lib/hours.sh
@@ -65,7 +62,10 @@ command="${1:-}"
 
 case "$command" in
     update) save_all_menus 10 ;;
-    list)   column -t -s$'\t' locations.txt ;;
+    list)
+        ensure_locations || exit 1
+        printf '%s\n' "$LOCATIONS_TSV" | column -t -s$'\t'
+        ;;
     hours)
         # Check the date in this shell. exit inside $(...) only leaves the
         # substitution, and the command would keep going with an empty date.

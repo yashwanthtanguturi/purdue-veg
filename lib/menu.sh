@@ -53,10 +53,14 @@ save_menu() {
 
 save_all_menus() {
     local days="${1:-10}" i day
+    # One lookup for the whole update. A failed lookup stops here instead of
+    # quietly saving nothing.
+    ensure_locations || return 1
     for ((i = 0; i < days; i++)); do
         day=$(day_offset "$i")
         while IFS=$'\t' read -r id name; do
+            [ -n "$id" ] || continue
             save_menu "$id" "$name" "$day"
-        done < locations.txt
+        done <<< "$LOCATIONS_TSV"
     done
 }

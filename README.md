@@ -10,7 +10,7 @@ My friends and I are vegetarian, and we have noticed that some dining halls don'
 
 The MVP does the following:
 
-- Fetches menu data for dining courts, On-the-GO!s, and Quick Bites
+- Fetches menu data for every location the Purdue dining API publishes: dining courts, On-the-GO!s, and Quick Bites
 - Keeps only the vegetarian items
 - Saves results in files organized by date and location
 - Covers the next 10 days of menus
@@ -23,7 +23,7 @@ The full prioritization is in the [Eisenhower Matrix](docs/eisenhower-matrix.pdf
 ## Changes since ideation
 
 - The dining API does not include ingredients, so the script cannot show what is in each item.
-- 1bowl at Meredith Hall and Sushi Boss at South Hall are excluded. Their items are not flagged vegetarian, so a saved menu for them would always be empty.
+- 1bowl at Meredith Hall and Sushi Boss at South Hall are included with the other locations. The API still does not flag any of their items as vegetarian.
 - jq was added. The menu JSON is nested, and grep or sed cannot reliably pull out meals, stations, and items.
 
 ## Tech Stack
@@ -37,7 +37,19 @@ The script runs on macOS and Linux. Date math uses GNU `date -d` when it is avai
 
 ## Setup
 
-Install curl and jq, then clone the repo:
+macOS already includes `curl` and `column`. `column` is what `list` uses to line up the location IDs. Install `jq`:
+
+```bash
+brew install jq
+```
+
+On Ubuntu or Debian:
+
+```bash
+sudo apt install curl jq bsdextrautils
+```
+
+Then clone the repo and run it:
 
 ```bash
 git clone https://github.com/yashwanthtanguturi/purdue-veg.git
@@ -79,9 +91,9 @@ Replace `/path/to/purdue-veg` with the folder you cloned into.
 
 ## Limitations
 
-1bowl at Meredith Hall and Sushi Boss at South Hall are not included.
-Purdue's menu data has no nutrition or allergen information for their
-items, so none of them are flagged vegetarian. Ask at the counter.
+The location list comes from `https://api.hfs.purdue.edu/menus/v2/locations`, so a new dining location is picked up the next time the script runs. `locations.txt` is only used when that request fails.
+
+1bowl at Meredith Hall and Sushi Boss at South Hall are on that list, but Purdue does not flag any of their items as vegetarian, so no menu file is saved for them. Ask at the counter.
 
 Cron only runs while the computer is awake, so scheduled updates are skipped if it's asleep. Run `./purdue-veg.sh update` manually to refresh.
 

@@ -18,7 +18,9 @@ show_hours() {
 
 show_all_hours() {
     local day="$1"
-    while IFS=$'\t' read -r id name; do 
+    ensure_locations || return 1
+    while IFS=$'\t' read -r id name; do
+        [ -n "$id" ] || continue
         show_hours "$name" "$day"
-    done < locations.txt
+    done <<< "$LOCATIONS_TSV"
 }
