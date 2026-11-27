@@ -20,18 +20,62 @@ The MVP does the following:
 
 The full prioritization is in the [Eisenhower Matrix](docs/eisenhower-matrix.pdf).
 
+## Changes since ideation
+
+- The dining API does not include ingredients, so the script cannot show what is in each item.
+- 1bowl at Meredith Hall and Sushi Boss at South Hall are excluded. Their items are not flagged vegetarian, so a saved menu for them would always be empty.
+- jq was added. The menu JSON is nested, and grep or sed cannot reliably pull out meals, stations, and items.
+
 ## Tech Stack
 
 - **Language:** Bash
 - **External tools:** curl, grep, sed, awk, date, mkdir, find, cron, jq
 - **Storage:** plain text files, one folder per day, one file per location
-- - **Data source:** Purdue Housing and Food Services dining menu API (`https://api.hfs.purdue.edu/menus/v2`), which returns JSON. It's undocumented and unofficial, so it could change.
+- **Data source:** Purdue Housing and Food Services dining menu API (`https://api.hfs.purdue.edu/menus/v2`), which returns JSON. It's undocumented and unofficial, so it could change.
+
+The script runs on macOS and Linux. Date math uses GNU `date -d` when it is available, and macOS `date -v` otherwise.
 
 ## Setup
-Coming soon. This will be filled once the script is tested. 
+
+Install curl and jq, then clone the repo:
+
+```bash
+git clone https://github.com/yashwanthtanguturi/purdue-veg.git
+cd purdue-veg
+chmod +x purdue-veg.sh
+```
+
+Fetch the menus, then print today:
+
+```bash
+./purdue-veg.sh update
+./purdue-veg.sh day
+```
+
+To refresh every day at 3 AM, add this to your crontab (`crontab -e`). Cron only runs while the computer is awake.
+
+```cron
+0 3 * * * cd /path/to/purdue-veg && ./purdue-veg.sh update >> cron.log 2>&1
+```
+
+Replace `/path/to/purdue-veg` with the folder you cloned into.
 
 ## Usage
-Coming soon. This will be filled in with the real command and sample output once the script works.
+
+```text
+./purdue-veg.sh update            Fetch the next 10 days of menus
+./purdue-veg.sh list              List locations and their IDs
+./purdue-veg.sh hours [DATE]      Show hours for every location
+./purdue-veg.sh day [DATE]        Show vegetarian items at every location
+./purdue-veg.sh show ID [DATE]    Show vegetarian items at one location
+```
+
+`DATE` is `YYYY-MM-DD` and defaults to today. Example:
+
+```bash
+./purdue-veg.sh hours 2026-11-30
+./purdue-veg.sh show FORD 2026-11-30
+```
 
 ## Limitations
 
@@ -40,9 +84,10 @@ Purdue's menu data has no nutrition or allergen information for their
 items, so none of them are flagged vegetarian. Ask at the counter.
 
 Cron only runs while the computer is awake, so scheduled updates are skipped if it's asleep. Run `./purdue-veg.sh update` manually to refresh.
+
 ## Roadmap
 
-- [ ] Show each location's hours
+- [x] Show each location's hours
 - [ ] Show ingredients for each item
 - [ ] Filter by meal
 - [ ] Favorites list that highlights favorite items
